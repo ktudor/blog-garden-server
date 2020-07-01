@@ -1,0 +1,15 @@
+* Initial setup
+  Origin: https://malcoded.com/posts/angular-file-upload-component-with-express/
+
+* Enhanced saving files to server
+  Origin: https://bezkoder.com/node-js-upload-resize-multiple-images/
+
+* Enhanced saving files to server
+  Origin: https://www.twilio.com/blog/transfer-files-data-javascript-applications-angular-node-js
+    could not get it to work. version problems
+  
+  File updates:
+    > Created src, controllers, routes directories and split up code
+
+* Enhanced saving image in database
+  Origin: https://bezkoder.com/node-js-upload-image-mysql/
