@@ -1,9 +1,7 @@
-  
 const express = require('express');
-const uploadOriginalController = require("./src/controllers/upload-original");
-
 const server = express();
 
+// Allow Cross Origin Resource Sharing
 const cors = require('cors');
 var corsOptions = {
   origin: '*',
@@ -12,7 +10,10 @@ var corsOptions = {
 
 server.use(cors(corsOptions));
 
-server.post('/uploadOriginal', uploadOriginalController.uploadOriginal);
+server.use(express.urlencoded({ extended: true }));
+
+const initRoutes = require("./src/routes/web");
+initRoutes(server);
 
 let port = 3000;
 server.listen(port, () => {

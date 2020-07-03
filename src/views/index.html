@@ -16,7 +16,7 @@
     <div class="container">
       <div class="row">
         <div class="col-sm-8 mt-3">
-          <h4>Node.js upload & resize multiple files - bezkoder.com</h4>
+          <h4>Upload & resize multiple files</h4>
 
           <form class="mt-4"
             action="/multiple-upload"
@@ -26,6 +26,26 @@
             <input
               type="file"
               name="images"
+              multiple
+              id="input-images"
+              class="form-control-file border"
+            />
+            <button type="submit" class="btn btn-primary mt-2">Submit</button>
+          </form>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-8 mt-3">
+          <h4>Upload & resize single file</h4>
+
+          <form class="mt-4"
+            action="/single-upload"
+            method="POST"
+            enctype="multipart/form-data"
+          >
+            <input
+              type="file"
+              name="image"
               multiple
               id="input-images"
               class="form-control-file border"

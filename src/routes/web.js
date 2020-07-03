@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const homeController = require("../controllers/home");
 const uploadController = require("./../controllers/upload");
-const uploadOriginalController = require("./../controllers/upload-original");
 
 let routes = app => {
   router.get("/", homeController.getHome);
@@ -15,8 +14,10 @@ let routes = app => {
   );
 
   router.post(
-    "/uploadOriginal",
-    uploadOriginalController.uploadOriginal
+    "/single-upload",
+    uploadController.uploadSingleImage,
+    uploadController.resizeImage,
+    uploadController.returnImageName
   );
 
   return app.use("/", router);
