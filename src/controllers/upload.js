@@ -1,6 +1,7 @@
 const multer = require("multer");
 const sharp = require("sharp");
 
+const imageDirectory = "C:/Files/Development/Angular/blog-garden-server/uploaded_images";
 const multerStorage = multer.memoryStorage();
 
 const multerFilter = (req, file, cb) => {
@@ -41,12 +42,19 @@ const resizeImages = async (req, res, next) => {
       const filename = file.originalname.replace(/\..+$/, "");
       const newFilename = `gblog-${filename}-${Date.now()}.jpeg`;
 
-      await sharp(file.buffer)
-        //.resize(640, 320)
-        .withMetadata()
-        .toFormat("jpeg")
-        .jpeg({ quality: 90 })
-        .toFile(`C:/Files/Development/Angular/blog-garden images/${newFilename}`);
+      // From https://sharp.pixelplumbing.com/api-input
+      const image = sharp(file.buffer);
+      await image
+        .metadata()
+        .then(function (metadata) {
+          image
+            .rotate()
+            .resize(Math.round(metadata.width / 2))
+            .withMetadata()
+            .toFormat("jpeg")
+            .jpeg({ quality: 72 })
+            .toFile(`${imageDirectory}/${newFilename}`);
+            });
 
       req.body.images.push(newFilename);
     })
@@ -91,14 +99,21 @@ const resizeImage = async (req, res, next) => {
   const filename = req.file.originalname.replace(/\..+$/, "");
   const newFilename = `gblog-${filename}-${Date.now()}.jpeg`;
 
-  await sharp(req.file.buffer)
-    //.resize(640, 320)
-    .withMetadata()
-    .toFormat("jpeg")
-    .jpeg({ quality: 90 })
-    .toFile(`C:/Files/Development/Angular/blog-garden images/${newFilename}`);
+  // From https://sharp.pixelplumbing.com/api-input
+  const image = sharp(file.buffer);
+  await image
+    .metadata()
+    .then(function (metadata) {
+      image
+        .rotate()
+        .resize(Math.round(metadata.width / 2))
+        .withMetadata()
+        .toFormat("jpeg")
+        .jpeg({ quality: 72 })
+        .toFile(`${imageDirectory}/${newFilename}`);
+        });
 
-  req.body.images.push(newFilename);
+  req.body.images.push(`${newFilename}`);
 
   next();
 };

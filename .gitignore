@@ -1,3 +1,6 @@
+# Images uploaded by users
+uploaded_images/
+
 # Logs
 logs
 *.log
