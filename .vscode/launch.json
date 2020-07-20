@@ -5,8 +5,17 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch Program",
+      "name": "Launch server.js",
       "program": "${workspaceFolder}/server.js",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "pwa-node"
+    },
+    {
+      "name": "Launch testImageServer.js",
+      "program": "${workspaceFolder}/testImageServer.js",
       "request": "launch",
       "skipFiles": [
         "<node_internals>/**"

@@ -40,7 +40,7 @@ const resizeImages = async (req, res, next) => {
   await Promise.all(
     req.files.map(async file => {
       const filename = file.originalname.replace(/\..+$/, "");
-      const newFilename = `gblog-${filename}-${Date.now()}.jpeg`;
+      const newFilename = `gblog-${filename}-${Date.now()}.jpg`;
 
       // From https://sharp.pixelplumbing.com/api-input
       const image = sharp(file.buffer);
@@ -97,23 +97,58 @@ const resizeImage = async (req, res, next) => {
 
   req.body.images = [];
   const filename = req.file.originalname.replace(/\..+$/, "");
-  const newFilename = `gblog-${filename}-${Date.now()}.jpeg`;
+  const newFilename = `gblog-${filename}-${Date.now()}.jpg`;
 
   // From https://sharp.pixelplumbing.com/api-input
-  const image = sharp(file.buffer);
-  await image
-    .metadata()
-    .then(function (metadata) {
-      image
-        .rotate()
-        .resize(Math.round(metadata.width / 2))
-        .withMetadata()
-        .toFormat("jpeg")
-        .jpeg({ quality: 72 })
-        .toFile(`${imageDirectory}/${newFilename}`);
-        });
+  // and https://github.com/lovell/sharp/issues/1897
+  const processedImage = sharp(await sharp(req.file.buffer).rotate().toBuffer());
 
-  req.body.images.push(`${newFilename}`);
+  // Process main file
+  await processedImage.metadata()
+  .then(info => {
+    const md = info;
+    console.log(`File: ${filename}`);
+    console.log(`Metadata height/width/size: ${md.height}/${md.width}/${md.size}`);
+    if (md.width > md.height) {
+      console.log(`resizing width from ${md.width}`);
+      processedImage.resize(600, null, {fit: 'cover'});
+    } else {
+      console.log(`resizing height from ${md.height}`);
+      processedImage.resize(null, 600, {fit: 'cover'});
+    }
+  
+    processedImage
+      .jpeg({ quality: 72 })
+      .withMetadata()
+      .toFormat("jpg")
+      .toFile(`${imageDirectory}/${newFilename}`)
+      .then(info => {
+        console.log(`File: ${newFilename}`);
+        console.log(`Metadata height/width/size/format: ${info.height}/${info.width}/${info.size}/${info.format}`);
+
+        req.body.images.push(`${newFilename}`);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  });
+
+  // Create thumbnail
+  const processedThumbnailImage = sharp(await sharp(req.file.buffer).rotate().toBuffer());
+
+  await processedThumbnailImage
+    .resize(300, 300, {fit: 'cover'})
+    .jpeg({ quality: 72 })
+    .withMetadata()
+    .toFormat("jpg")
+    .toFile(`${imageDirectory}/thumbnail/${newFilename}`)
+    .then(info => {
+      console.log(`File: ${newFilename}`);
+      console.log(`Metadata height/width/size/format: ${info.height}/${info.width}/${info.size}/${info.format}`);
+    })
+    .catch(err => {
+      console.log(err);
+    });
 
   next();
 };
